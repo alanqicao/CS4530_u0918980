@@ -64,7 +64,6 @@ fun ConcatenateApp(){
         }) {
             Text("Concatenate")
         }
-
         Text(text = "Result: $result")
     }
 
