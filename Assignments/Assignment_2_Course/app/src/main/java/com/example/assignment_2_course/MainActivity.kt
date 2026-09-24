@@ -63,6 +63,13 @@ class CourseViewModel : ViewModel() {
         val currentCourses = courses.value
         courses.value = currentCourses - selectedCourse
     }
+
+    fun editCourse(oldCourse: Course, newCourse: Course) {
+        val currentCourses = courses.value
+        courses.value = currentCourses.map {
+            if (it == oldCourse) newCourse else it
+        }
+    }
 }
 
 class MainActivity : ComponentActivity() {
@@ -159,6 +166,19 @@ fun Course(myVMObj: CourseViewModel) {
 fun CoursesItemRow(myVMObj: CourseViewModel) {
     val observableCourses by myVMObj.coursesReadOnly.collectAsStateWithLifecycle()
     var selectedCourse by remember { mutableStateOf<Course?>(null) }
+    var isEditing by remember { mutableStateOf(false) }
+
+    var departmentTest by remember {
+        mutableStateOf("")
+    }
+
+    var courseNumberTest by remember {
+        mutableStateOf("")
+    }
+
+    var locationTest by remember {
+        mutableStateOf("")
+    }
     Column(
 
     ) {
@@ -176,9 +196,12 @@ fun CoursesItemRow(myVMObj: CourseViewModel) {
                         .background(
                             if (selectedCourse == course) Color.DarkGray else Color.Transparent
                         )
-
-                        .padding(end = 10.dp)
-                        .clickable { selectedCourse = course })
+                        .clickable {
+                            selectedCourse = course
+                            isEditing = false
+                        }
+                        .padding(10.dp)
+                )
 
             }
         }
@@ -186,27 +209,97 @@ fun CoursesItemRow(myVMObj: CourseViewModel) {
         selectedCourse?.let { course ->
             Text(
                 "Selected Course: ${course.department} ${course.courseNumber} ${course.location}",
+                fontSize = 20.sp,
+                color = Color.Magenta
             )
 
-            Button(
-                onClick = {
-                    myVMObj.deleteCourse(course)
-                    selectedCourse = null
-                },
-                colors = ButtonDefaults.buttonColors(
 
-                    containerColor = Color.Red
-                ),
-                modifier = Modifier.height(36.dp),
-                contentPadding = PaddingValues(
-                    horizontal = 12.dp,
-                    vertical = 4.dp
+            if (isEditing) {
+
+                Column() {
+                    Row() {
+                        OutlinedTextField(
+                            value = departmentTest,
+                            onValueChange = { departmentTest = it },
+                            label = { Text("Department") },
+                            modifier = Modifier.weight(1f)
+                        )
+
+                        OutlinedTextField(
+                            value = courseNumberTest,
+                            onValueChange = { courseNumberTest = it },
+                            label = { Text("Course Number") },
+                            modifier = Modifier.weight(1f)
+                        )
+
+                        OutlinedTextField(
+                            value = locationTest,
+                            onValueChange = { locationTest = it },
+                            label = { Text("Location") },
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+                    Row() {
+                        Button(
+                            onClick = {
+                                val newCourse = Course(
+                                    department = departmentTest,
+                                    courseNumber = courseNumberTest,
+                                    location = locationTest
+                                )
+                                selectedCourse = newCourse
+                                myVMObj.editCourse(course, newCourse)
+                                isEditing = false
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.Blue
+                            ),
+                        ) { Text("Save") }
+                        Button(
+                            onClick = {
+                                isEditing = false
+                            },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color.Red
+                            ),
+                        ) { Text("Cancel") }
+                    }
+
+                }
+            } else {
+                Button(
+                    onClick = {
+                        isEditing = true
+                        departmentTest = course.department
+                        courseNumberTest = course.courseNumber
+                        locationTest = course.location
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Gray
+                    ),
+                ) { Text("Edit Course") }
+
+                Button(
+                    onClick = {
+                        myVMObj.deleteCourse(course)
+                        selectedCourse = null
+                    },
+                    colors = ButtonDefaults.buttonColors(
+
+                        containerColor = Color.Red
+                    ),
+                    modifier = Modifier.height(36.dp),
+                    contentPadding = PaddingValues(
+                        horizontal = 12.dp,
+                        vertical = 4.dp
+                    )
+
                 )
-
-            )
-            {
-                Text("Delete Course")
+                {
+                    Text("Delete Course")
+                }
             }
+
 
         }
     }
