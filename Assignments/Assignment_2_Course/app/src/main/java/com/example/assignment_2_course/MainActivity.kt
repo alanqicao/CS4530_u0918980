@@ -48,6 +48,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             Assignment_2_CourseTheme {
                 val myVMObj: CourseViewModel = viewModel()
+                val observableCourses by myVMObj.coursesReadOnly.collectAsStateWithLifecycle()
                 Column(
                     Modifier
                         .fillMaxWidth()
@@ -55,8 +56,8 @@ class MainActivity : ComponentActivity() {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    CourseInputForm(myVMObj)
-                    CoursesList(myVMObj)
+                    CourseInputForm(myVMObj::addCourse)
+                    CoursesList( myVMObj::deleteCourse,observableCourses,myVMObj::editCourse)
                 }
             }
         }
@@ -69,7 +70,7 @@ class MainActivity : ComponentActivity() {
  * @param myVMObj the ViewModel used to add courses
  */
 @Composable
-fun CourseInputForm(myVMObj: CourseViewModel) {
+fun CourseInputForm(addCourse:(Course) -> Unit) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -124,7 +125,7 @@ fun CourseInputForm(myVMObj: CourseViewModel) {
                     courseNumber = courseNumberInput,
                     location = locationInput
                 )
-                myVMObj.addCourse(newCourse)
+                addCourse(newCourse)
                 departmentInput = ""
                 courseNumberInput = ""
                 locationInput = ""
@@ -143,8 +144,8 @@ fun CourseInputForm(myVMObj: CourseViewModel) {
  * @param CourseViewModel the ViewModel containing the course data
  */
 @Composable
-fun CoursesList(myVMObj: CourseViewModel) {
-    val observableCourses by myVMObj.coursesReadOnly.collectAsStateWithLifecycle()
+fun CoursesList(deleteCourse:(Course) -> Unit,observableCourses: List<Course>,editCourse:(Course,Course) -> Unit) {
+
     var selectedCourse by remember { mutableStateOf<Course?>(null) }
     var isEditing by remember { mutableStateOf(false) }
 
@@ -228,7 +229,7 @@ fun CoursesList(myVMObj: CourseViewModel) {
                                     location = editLocation
                                 )
                                 selectedCourse = newCourse
-                                myVMObj.editCourse(course, newCourse)
+                                editCourse(course, newCourse)
                                 isEditing = false
                             },
                             colors = ButtonDefaults.buttonColors(
@@ -261,7 +262,7 @@ fun CoursesList(myVMObj: CourseViewModel) {
 
                 Button(
                     onClick = {
-                        myVMObj.deleteCourse(course)
+                        deleteCourse(course)
                         selectedCourse = null
                     },
                     colors = ButtonDefaults.buttonColors(
