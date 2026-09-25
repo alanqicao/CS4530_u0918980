@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -21,57 +20,27 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.assignment_2_course.ui.theme.Assignment_2_CourseTheme
-
-import androidx.lifecycle.viewmodel.compose.viewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.assignment_2_course.ui.theme.Assignment_2_CourseTheme
 
 
-data class Course(
-    val department: String,
-    val courseNumber: String,
-    val location: String
-)
-
-class CourseViewModel : ViewModel() {
-    private val courses = MutableStateFlow(listOf<Course>())
-    val coursesReadOnly: StateFlow<List<Course>> = courses
-
-    fun addCourse(newCourse: Course) {
-        val currentCourses = courses.value
-        courses.value = currentCourses + newCourse
-    }
-
-    fun deleteCourse(selectedCourse: Course) {
-        val currentCourses = courses.value
-        courses.value = currentCourses - selectedCourse
-    }
-
-    fun editCourse(oldCourse: Course, newCourse: Course) {
-        val currentCourses = courses.value
-        courses.value = currentCourses.map {
-            if (it == oldCourse) newCourse else it
-        }
-    }
-}
-
+/**
+ * The main and only activity for the course application.
+ */
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,30 +55,35 @@ class MainActivity : ComponentActivity() {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    Course(myVMObj)
-                    CoursesItemRow(myVMObj)
+                    CourseInputForm(myVMObj)
+                    CoursesList(myVMObj)
                 }
             }
         }
     }
 }
 
+/**
+ * Displays the input fields used to create and add a new course.
+ *
+ * @param myVMObj the ViewModel used to add courses
+ */
 @Composable
-fun Course(myVMObj: CourseViewModel) {
+fun CourseInputForm(myVMObj: CourseViewModel) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
 
-        var departmentTest by remember {
+        var departmentInput by remember {
             mutableStateOf("")
         }
 
-        var courseNumberTest by remember {
+        var courseNumberInput by remember {
             mutableStateOf("")
         }
 
-        var locationTest by remember {
+        var locationInput by remember {
             mutableStateOf("")
         }
 
@@ -121,22 +95,22 @@ fun Course(myVMObj: CourseViewModel) {
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             OutlinedTextField(
-                value = departmentTest,
-                onValueChange = { departmentTest = it },
+                value = departmentInput,
+                onValueChange = { departmentInput = it },
                 label = { Text("Department") },
                 modifier = Modifier.weight(1f)
             )
 
             OutlinedTextField(
-                value = courseNumberTest,
-                onValueChange = { courseNumberTest = it },
+                value = courseNumberInput,
+                onValueChange = { courseNumberInput = it },
                 label = { Text("Course Number") },
                 modifier = Modifier.weight(1f)
             )
 
             OutlinedTextField(
-                value = locationTest,
-                onValueChange = { locationTest = it },
+                value = locationInput,
+                onValueChange = { locationInput = it },
                 label = { Text("Location") },
                 modifier = Modifier.weight(1f)
             )
@@ -146,14 +120,14 @@ fun Course(myVMObj: CourseViewModel) {
             Button(onClick = {
 
                 val newCourse = Course(
-                    department = departmentTest,
-                    courseNumber = courseNumberTest,
-                    location = locationTest
+                    department = departmentInput,
+                    courseNumber = courseNumberInput,
+                    location = locationInput
                 )
                 myVMObj.addCourse(newCourse)
-                departmentTest = ""
-                courseNumberTest = ""
-                locationTest = ""
+                departmentInput = ""
+                courseNumberInput = ""
+                locationInput = ""
             }) {
                 Text("Add Course")
             }
@@ -162,21 +136,27 @@ fun Course(myVMObj: CourseViewModel) {
     }
 }
 
+/**
+ * Displays the course list and allows a course to be selected,
+ * edited, or deleted.
+ *
+ * @param CourseViewModel the ViewModel containing the course data
+ */
 @Composable
-fun CoursesItemRow(myVMObj: CourseViewModel) {
+fun CoursesList(myVMObj: CourseViewModel) {
     val observableCourses by myVMObj.coursesReadOnly.collectAsStateWithLifecycle()
     var selectedCourse by remember { mutableStateOf<Course?>(null) }
     var isEditing by remember { mutableStateOf(false) }
 
-    var departmentTest by remember {
+    var editDepartment by remember {
         mutableStateOf("")
     }
 
-    var courseNumberTest by remember {
+    var editNumber by remember {
         mutableStateOf("")
     }
 
-    var locationTest by remember {
+    var editLocation by remember {
         mutableStateOf("")
     }
     Column(
@@ -219,22 +199,22 @@ fun CoursesItemRow(myVMObj: CourseViewModel) {
                 Column() {
                     Row() {
                         OutlinedTextField(
-                            value = departmentTest,
-                            onValueChange = { departmentTest = it },
+                            value = editDepartment,
+                            onValueChange = { editDepartment = it },
                             label = { Text("Department") },
                             modifier = Modifier.weight(1f)
                         )
 
                         OutlinedTextField(
-                            value = courseNumberTest,
-                            onValueChange = { courseNumberTest = it },
+                            value = editNumber,
+                            onValueChange = { editNumber = it },
                             label = { Text("Course Number") },
                             modifier = Modifier.weight(1f)
                         )
 
                         OutlinedTextField(
-                            value = locationTest,
-                            onValueChange = { locationTest = it },
+                            value = editLocation,
+                            onValueChange = { editLocation = it },
                             label = { Text("Location") },
                             modifier = Modifier.weight(1f)
                         )
@@ -243,9 +223,9 @@ fun CoursesItemRow(myVMObj: CourseViewModel) {
                         Button(
                             onClick = {
                                 val newCourse = Course(
-                                    department = departmentTest,
-                                    courseNumber = courseNumberTest,
-                                    location = locationTest
+                                    department = editDepartment,
+                                    courseNumber = editNumber,
+                                    location = editLocation
                                 )
                                 selectedCourse = newCourse
                                 myVMObj.editCourse(course, newCourse)
@@ -270,9 +250,9 @@ fun CoursesItemRow(myVMObj: CourseViewModel) {
                 Button(
                     onClick = {
                         isEditing = true
-                        departmentTest = course.department
-                        courseNumberTest = course.courseNumber
-                        locationTest = course.location
+                        editDepartment = course.department
+                        editNumber = course.courseNumber
+                        editLocation = course.location
                     },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.Gray
