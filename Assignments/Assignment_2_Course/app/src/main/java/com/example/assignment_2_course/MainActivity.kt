@@ -57,7 +57,7 @@ class MainActivity : ComponentActivity() {
                     verticalArrangement = Arrangement.Center
                 ) {
                     CourseInputForm(myVMObj::addCourse)
-                    CoursesList( myVMObj::deleteCourse,observableCourses,myVMObj::editCourse)
+                    CoursesList(myVMObj::deleteCourse, observableCourses, myVMObj::editCourse)
                 }
             }
         }
@@ -70,12 +70,11 @@ class MainActivity : ComponentActivity() {
  * @param myVMObj the ViewModel used to add courses
  */
 @Composable
-fun CourseInputForm(addCourse:(Course) -> Unit) {
+fun CourseInputForm(addCourse: (Course) -> Unit) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-
         var departmentInput by remember {
             mutableStateOf("")
         }
@@ -144,7 +143,11 @@ fun CourseInputForm(addCourse:(Course) -> Unit) {
  * @param CourseViewModel the ViewModel containing the course data
  */
 @Composable
-fun CoursesList(deleteCourse:(Course) -> Unit,observableCourses: List<Course>,editCourse:(Course,Course) -> Unit) {
+fun CoursesList(
+    deleteCourse: (Course) -> Unit,
+    observableCourses: List<Course>,
+    editCourse: (Course, Course) -> Unit
+) {
 
     var selectedCourse by remember { mutableStateOf<Course?>(null) }
     var isEditing by remember { mutableStateOf(false) }
@@ -160,8 +163,8 @@ fun CoursesList(deleteCourse:(Course) -> Unit,observableCourses: List<Course>,ed
     var editLocation by remember {
         mutableStateOf("")
     }
-    Column(
 
+    Column(
     ) {
         Text("Courses", fontSize = 25.sp, fontWeight = FontWeight.ExtraBold, color = Color.Blue)
         LazyColumn {
@@ -183,7 +186,6 @@ fun CoursesList(deleteCourse:(Course) -> Unit,observableCourses: List<Course>,ed
                         }
                         .padding(10.dp)
                 )
-
             }
         }
 
@@ -194,9 +196,7 @@ fun CoursesList(deleteCourse:(Course) -> Unit,observableCourses: List<Course>,ed
                 color = Color.Magenta
             )
 
-
             if (isEditing) {
-
                 Column() {
                     Row() {
                         OutlinedTextField(
@@ -274,7 +274,6 @@ fun CoursesList(deleteCourse:(Course) -> Unit,observableCourses: List<Course>,ed
                         horizontal = 12.dp,
                         vertical = 4.dp
                     )
-
                 )
                 {
                     Text("Delete Course")
