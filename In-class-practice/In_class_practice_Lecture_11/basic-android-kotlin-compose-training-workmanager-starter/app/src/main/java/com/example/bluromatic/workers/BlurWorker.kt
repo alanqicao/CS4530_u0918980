@@ -3,6 +3,11 @@ package com.example.bluromatic.workers
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import android.content.Context
+import android.graphics.BitmapFactory
+import android.util.Log
+import com.example.bluromatic.R
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 private const val TAG = "BlurWorker"
 class BlurWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx, params) {
@@ -11,7 +16,9 @@ class BlurWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx, 
             applicationContext.resources.getString(R.string.blurring_image),
             applicationContext
         )
-        return try {
+        return withContext(Dispatchers.IO) {
+            //return try {
+            return@withContext try {
             val picture = BitmapFactory.decodeResource(
                 applicationContext.resources,
                 R.drawable.android_cupcake
@@ -32,5 +39,10 @@ class BlurWorker(ctx: Context, params: WorkerParameters) : CoroutineWorker(ctx, 
             )
             Result.failure()
         }
+
     }
+
+    }
+
+
 }
