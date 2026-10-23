@@ -11,6 +11,7 @@ composeBom = "2026.02.01"
 lifecycle = "2.11.0"
 room = "2.8.5"
 ksp = "2.3.4"
+room3Common = "3.0.3"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -33,6 +34,7 @@ androidx-lifecycle-runtime-compose = {module = "androidx.lifecycle:lifecycle-run
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+androidx-room3-common = { group = "androidx.room3", name = "room3-common", version.ref = "room3Common" }
 
 
 [plugins]

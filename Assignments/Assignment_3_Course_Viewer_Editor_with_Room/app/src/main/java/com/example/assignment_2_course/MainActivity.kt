@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -35,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.assignment_2_course.room.CourseEntity
 import com.example.assignment_2_course.ui.theme.Assignment_2_CourseTheme
 
 
@@ -45,9 +47,10 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        val myVMObj: CourseViewModel by viewModels{CourseViewModelProvider.Factory}
         setContent {
             Assignment_2_CourseTheme {
-                val myVMObj: CourseViewModel = viewModel()
+
                 val observableCourses by myVMObj.coursesReadOnly.collectAsStateWithLifecycle()
                 Column(
                     Modifier
@@ -70,7 +73,7 @@ class MainActivity : ComponentActivity() {
  * @param myVMObj the ViewModel used to add courses
  */
 @Composable
-fun CourseInputForm(addCourse: (Course) -> Unit) {
+fun CourseInputForm(addCourse: (CourseEntity) -> Unit) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -119,7 +122,7 @@ fun CourseInputForm(addCourse: (Course) -> Unit) {
         Row {
             Button(onClick = {
 
-                val newCourse = Course(
+                val newCourse = CourseEntity(
                     department = departmentInput,
                     courseNumber = courseNumberInput,
                     location = locationInput
@@ -144,12 +147,12 @@ fun CourseInputForm(addCourse: (Course) -> Unit) {
  */
 @Composable
 fun CoursesList(
-    deleteCourse: (Course) -> Unit,
-    observableCourses: List<Course>,
-    editCourse: (Course, Course) -> Unit
+    deleteCourse: (CourseEntity) -> Unit,
+    observableCourses: List<CourseEntity>,
+    editCourse: (CourseEntity, CourseEntity) -> Unit
 ) {
 
-    var selectedCourse by remember { mutableStateOf<Course?>(null) }
+    var selectedCourse by remember { mutableStateOf<CourseEntity?>(null) }
     var isEditing by remember { mutableStateOf(false) }
 
     var editDepartment by remember {
@@ -223,7 +226,7 @@ fun CoursesList(
                     Row() {
                         Button(
                             onClick = {
-                                val newCourse = Course(
+                                val newCourse = course.copy(
                                     department = editDepartment,
                                     courseNumber = editNumber,
                                     location = editLocation
