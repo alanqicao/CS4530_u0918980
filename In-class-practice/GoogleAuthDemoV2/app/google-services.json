@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "959470208710",
+    "project_id": "androidauth-387a2",
+    "storage_bucket": "androidauth-387a2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:959470208710:android:d95f03751fc49c10ffb9c7",
+        "android_client_info": {
+          "package_name": "com.example.googleauthdemov2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "959470208710-lrj5gndv282v1i3s549cdqa1dgmnk2nt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAormZoGkll7ag3T8l8SHsE5qm_IJ2P0ig"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "959470208710-lrj5gndv282v1i3s549cdqa1dgmnk2nt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
