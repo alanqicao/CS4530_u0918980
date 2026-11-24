@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "918605692869",
+    "project_id": "firestsoredemo",
+    "storage_bucket": "firestsoredemo.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:918605692869:android:adf15b3a4874660c4455ac",
+        "android_client_info": {
+          "package_name": "com.example.firestoredemov2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD7ltyNp_AOaDhx-a3YAjj4WpUimw0Srwc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
